@@ -125,6 +125,8 @@ make install
 > now we copy all file Qt in folder qt5pi to raspberrypi using rsync
 
 ```
+cd
+cd ~/raspi
 rsync -avz qt5pi pi@192.168.1.6:/usr/local
 ```
 > We want to install qtmqtt or other modules but not find in source, so we must install manualy
