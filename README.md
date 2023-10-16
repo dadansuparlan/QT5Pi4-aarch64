@@ -151,7 +151,8 @@ cd ~/raspi
 rm -rf qt5source
 rm -rf qtpi-build
 ```
-> now move to raspberrypi terminal or using ssh on ubuntu
+> next step we make linking Path library permanently of qt in raspberrypi
+> move to raspberrypi terminal or using ssh on ubuntu
 
 ```
 pi@raspberrypi:~ $ echo /usr/local/qt5pi/lib | sudo tee /etc/ld.so.conf.d/qt5pi.conf
