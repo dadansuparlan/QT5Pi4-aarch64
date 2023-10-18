@@ -86,28 +86,60 @@ cd qtsource
 git checkout v5.14.2
 ```
 ```
-perl ini-repository --module-subset=qtbase,qtxmlpatterns,qtsvg,qtdeclarative,qtimageformats,qtgraphicaleffects,qtquickcontrols,qtquickcontrols2,qtvirtualkeyboard,qtwebsockets,qtwebglplugin,qtcharts,qtconnectivity,qtmultimedia,qtlocation,qtserialport,qtserialbus
+perl init-repository --module-subset=qtbase,qtxmlpatterns,qtsvg,qtdeclarative,qtimageformats,qtgraphicaleffects,qtquickcontrols,qtquickcontrols2,qtvirtualkeyboard,qtwebsockets,qtwebglplugin,qtcharts,qtconnectivity,qtmultimedia,qtlocation,qtserialport,qtserialbus
 ```
-> we will use mkspec device "linux-rasp-pi4-v3d-g++" this configuration of qmake.conf must be edit.
-> 
-> find file using file manager "qmake.conf" in folder "home/raspi/qtsource/qtbase/mkspecs/devices/linux-rasp-pi4-v3d-g++"
-> 
-> open qmake.conf using text editor
-> 
-> replace all text with :
+> we will use mkspec device "linux-rasp-pi4-aarch64" this must be add new folder in ~/raspi/qtsource/qtbase/mkspecs/device.
 ```
-include(../common/linux_device_pre.conf)
-QT_QPA_DEFAULT_PLATFORM =
+cd
+mkdir ~/raspi/qtsource/qtbase/mkspecs/devices/linux-rasp-pi-aarch64
+cd ~/raspi/qtsource/qtbase/mkspecs/devices/linux-rasp-pi-aarch64
+nano qmake.conf
+```
+>add text in qmake.conf :
+```
+#
+# Generic qmake configuration for building with g++ on Raspberry Pi 4 (64-bit).
+#
+# Tested with Raspberry Pi OS 64-bit and aarch64 gcc compiler from Debian package repository
+#
+# A minimal configure line could look something like this:
+# ./configure -release -opengl es2 -device linux-rasp-pi4-aarch64 -device-option CROSS_COMPILE=aarch64-linux-gnu- -sysroot ~/rpi-sysroot -prefix /usr/local/qt6 -extprefix $HOME/qt-raspi
 
-QMAKE_CFLAGS            = -march=armv8-a -mtune=cortex-a72
-QMAKE_CXXFLAGS          = $$QMAKE_CFLAGS
 DISTRO_OPTS            += deb-multi-arch
+
+include(../common/linux_device_pre.conf)
+
+QMAKE_LIBS_EGL         += -lEGL
+QMAKE_LIBS_OPENGL_ES2  += -lGLESv2 -lEGL
+
+QMAKE_CFLAGS            += -march=armv8-a
+QMAKE_CXXFLAGS          += $$QMAKE_CFLAGS
+
+EGLFS_DEVICE_INTEGRATION = eglfs_kms
+
+LINKER_FLAGS   += -Wl,-O1 -Wl,--hash-style=gnu -Wl,--as-needed
+
 include(../common/linux_device_post.conf)
 
 load(qt_config)
 ```
+>save and close it
+```
+nano qplatformdefs.h
+```
+>add text in qplatformdefs.h :
+```
+/****************************************************************************
+**
+** Copyright (C) 2022 The Qt Company Ltd.
+** SPDX-License-Identifier: LicenseRef-Qt-Commercial OR LGPL-3.0-only OR GPL-2.0-only OR GPL-3.0-only
+**
+****************************************************************************/
 
-> save it and close text editor
+#include "../../linux-g++/qplatformdefs.h"
+
+```
+>save and close
 > now we continue to build qt cross compile
 ```
 cd
@@ -116,7 +148,7 @@ mkdir qtpi-build
 cd qtpi-build
 ```
 ```
-../qtsource/configure -release -opengl es2 -device linux-rasp-pi4-v3d-g++ -device-option CROSS_COMPILE=aarch64-linux-gnu- -syroot ~/raspi/sysroot -opensource -confirm-license -make libs -prefix /usr/local/qt5pi -extprefix ~/raspi/qt5pi -hostprefix ~/raspi/qt5 -no-use-gold-linker -v
+../qtsource/configure -release -opengl es2 -device linux-rasp-pi4-aarch64 -device-option CROSS_COMPILE=aarch64-linux-gnu- -sysroot ~/raspi/sysroot -prefix /usr/local/qt5pi -extprefix ~/raspi/qt5pi -hostprefix ~/raspi/qt5 -opensource -confirm-license -make libs -no-use-gold-linker -v
 ```
 ```
 make -j4
@@ -133,7 +165,7 @@ rsync -avz qt5pi pi@192.168.1.6:/usr/local
 
 ```
 cd
-cd /raspi/qt5source
+cd ~/raspi
 git clone git://code.qt.io/qt/qtmqtt.git -b 5.14.2
 cd qtmqtt
 ~/raspi/qt5/bin/qmake
@@ -141,7 +173,7 @@ make
 make install
 cd
 cd ~/raspi
-rsync -avz qt5pi pi@192.168.1.11:/usr/local
+rsync -avz qt5pi pi@192.168.1.6:/usr/local
 ```
 >remove Folder and file not used for space drive
 
@@ -150,6 +182,7 @@ cd
 cd ~/raspi
 rm -rf qt5source
 rm -rf qtpi-build
+rm -rf qtmqtt
 ```
 > next step we make linking Path library permanently of qt in raspberrypi
 > move to raspberrypi terminal or using ssh on ubuntu
