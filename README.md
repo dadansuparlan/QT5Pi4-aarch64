@@ -34,7 +34,7 @@ ldd --version
 sudo apt-get build-dep qt5-qmake
 ```
 ```
-sudo apt-get install libegl1-mesa libegl1-mesa-dev libgles2-mesa libgles2-mesa-dev wiringpi libnfc-bin libnfc-dev fonts-texgyre libts-dev libbluetooth-dev bluez-tools gstreamer1.0-plugins* libgstreamer1.0-dev libgstreamer-plugins-base1.0-dev libopenal-data libsndi07.0 libopenal1 libopenal-dev pulseaudio
+sudo apt-get install libegl1-mesa libegl1-mesa-dev libgles2-mesa libgles2-mesa-dev wiringpi libnfc-bin libnfc-dev fonts-texgyre libts-dev libbluetooth-dev bluez-tools gstreamer1.0-plugins* libgstreamer1.0-dev libgstreamer-plugins-base1.0-dev libopenal-data libsndio7.0 libopenal1 libopenal-dev pulseaudio
 ```
 ```
 sudo gpasswd -a pi render
@@ -87,7 +87,7 @@ cd qtsource
 git checkout v5.14.2
 ```
 ```
-perl init-repository --module-subset=qtbase,qtxmlpatterns,qtsvg,qtdeclarative,qtimageformats,qtgraphicaleffects,qtquickcontrols,qtquickcontrols2,qtvirtualkeyboard,qtwebsockets,qtwebglplugin,qtcharts,qtconnectivity,qtmultimedia,qtlocation,qtserialport,qtserialbus
+perl init-repository --module-subset=qtbase,qtxmlpatterns,qtsvg,qtdeclarative,qtimageformats,qtgraphicaleffects,qtquickcontrols,qtquickcontrols2,qtvirtualkeyboard,qtwebsockets,qtwebglplugin,qtcharts,qtconnectivity,qtmultimedia,qtlocation,qtserialport,qtsql,qtserialbus
 ```
 > we will use mkspec device "linux-rasp-pi4-aarch64" this must be add new folder in ~/raspi/qtsource/qtbase/mkspecs/device.
 ```
@@ -149,7 +149,7 @@ mkdir qtpi-build
 cd qtpi-build
 ```
 ```
-../qtsource/configure -release -opengl es2 -device linux-rasp-pi4-aarch64 -device-option CROSS_COMPILE=aarch64-linux-gnu- -sysroot ~/raspi/sysroot -prefix /usr/local/qt5pi -extprefix ~/raspi/qt5pi -hostprefix ~/raspi/qt5 -opensource -confirm-license -make libs -no-use-gold-linker -v
+../qtsource/configure -release -opengl es2 -device linux-rasp-pi-aarch64 -device-option CROSS_COMPILE=aarch64-linux-gnu- -sysroot ~/raspi/sysroot -prefix /usr/local/qt5pi -extprefix ~/raspi/qt5pi -hostprefix ~/raspi/qt5 -opensource -confirm-license -make libs -no-use-gold-linker -v
 ```
 ```
 make -j4
